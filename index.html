@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SafeBite</title>
+<style>
+:root{--bg:#f4f6f5;--card:#fff;--ink:#17211c;--mute:#5d6b64;--line:#dfe5e1;--brand:#1f7a4d;--buy:#1f7a4d;--cau:#b7791f;--avo:#c0392b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,sans-serif}
+main{max-width:460px;margin:0 auto;padding:16px 16px 90px}
+h1{font-size:22px;margin:4px 0 2px}h2{font-size:17px;margin:18px 0 8px}
+.sub{color:var(--mute);margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+label.chk{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+label.chk:last-child{border:0}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--brand)}
+input[type=text]{width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;font-size:16px}
+button{font:inherit;cursor:pointer}
+.btn{width:100%;padding:13px;border:0;border-radius:12px;background:var(--brand);color:#fff;font-weight:600;margin-top:8px}
+.btn.ghost{background:#fff;color:var(--brand);border:1.5px solid var(--brand)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 12px;border:1px solid var(--line);background:#fff;border-radius:99px;font-size:14px}
+.sug{padding:11px 4px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;cursor:pointer}
+.sug small{color:var(--mute)}
+.scanner{height:150px;border-radius:12px;background:#10241a;position:relative;overflow:hidden;display:grid;place-items:center;color:#9fd8b8;margin-top:8px}
+.scanner i{position:absolute;left:0;right:0;height:3px;background:#3ddc84;box-shadow:0 0 12px #3ddc84;animation:sc 1.2s linear infinite alternate}
+@keyframes sc{from{top:8%}to{top:90%}}
+.verdict{text-align:center;color:#fff;border-radius:14px;padding:18px 12px;margin-bottom:12px}
+.verdict b{font-size:34px;display:block;letter-spacing:1px}
+.v0{background:var(--buy)}.v1{background:var(--cau)}.v2{background:var(--avo)}
+.reason{display:flex;gap:8px;padding:6px 0}
+.dot{flex:none;width:10px;height:10px;border-radius:50%;margin-top:7px}
+.boy{border:1.5px solid var(--avo);background:#fdecea;color:#7a1f16;border-radius:12px;padding:12px;margin-bottom:12px}
+.ok{border:1.5px solid var(--buy);background:#e9f6ee;color:#14532f;border-radius:12px;padding:12px;margin-bottom:12px}
+.tag{font-size:12px;font-weight:700;color:#fff;padding:2px 8px;border-radius:99px;white-space:nowrap}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:center}
+nav div{display:flex;width:100%;max-width:460px}
+nav button{flex:1;padding:14px 0;border:0;background:none;color:var(--mute);font-weight:600}
+nav button.on{color:var(--brand);box-shadow:inset 0 3px 0 var(--brand)}
+.note{font-size:12px;color:var(--mute);text-align:center;margin-top:18px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav><div><button id="t-profile">👤 My Profile</button><button id="t-scan">🔍 Scan</button></div></nav>
+<script>
+const CONDS = {diabetes:'Diabetes', bp:'High blood pressure', nuts:'Nut allergy', milk:'Milk / lactose allergy', gluten:'Gluten / celiac', soy:'Soy allergy', vegan:'Vegan diet', boycott:'Flag boycotted brands'};
+// Sample data for the demo only (per 100g). Not verified nutrition or boycott facts.
+const BOY = 'On the common boycott lists (parent company: ';
+const P = [
+ {b:'Coca-Cola',n:'Classic',code:'8961001000011',cat:'drink',sugar:10.6,sodium:10,al:[],vegan:1,boy:BOY+'The Coca-Cola Co.)'},
+ {b:'Pepsi',n:'Regular',code:'8961001000028',cat:'drink',sugar:11,sodium:10,al:[],vegan:1,boy:BOY+'PepsiCo)'},
+ {b:'Pakola',n:'Ice Cream Soda',code:'8961001000035',cat:'drink',sugar:11,sodium:15,al:[],vegan:1,local:1},
+ {b:'Shezan',n:'Mango Juice',code:'8961001000042',cat:'drink',sugar:12,sodium:10,al:[],vegan:1,local:1},
+ {b:'Tapal',n:'Green Tea (unsweetened)',code:'8961001000059',cat:'drink',sugar:0,sodium:0,al:[],vegan:1,local:1},
+ {b:'Lay\'s',n:'Classic Salted',code:'8961001000066',cat:'snack',sugar:1,sodium:560,al:[],vegan:1,boy:BOY+'PepsiCo)'},
+ {b:'Kurkure',n:'Masala Munch',code:'8961001000073',cat:'snack',sugar:3,sodium:780,al:['gluten'],vegan:1,boy:BOY+'PepsiCo)'},
+ {b:'Slanty',n:'Masala',code:'8961001000080',cat:'snack',sugar:3,sodium:720,al:['gluten'],vegan:1,local:1},
+ {b:'Lahori',n:'Roasted Chana',code:'8961001000097',cat:'snack',sugar:2,sodium:120,al:[],vegan:1,local:1},
+ {b:'Local Mix',n:'Salted Peanuts',code:'8961001000103',cat:'snack',sugar:3,sodium:250,al:['nuts'],vegan:1,local:1},
+ {b:'Nestlé',n:'KitKat 4-finger',code:'8961001000110',cat:'biscuit',sugar:47,sodium:80,al:['milk','gluten','soy'],vegan:0,boy:BOY+'Nestlé)'},
+ {b:'Peek Freans',n:'Sooper',code:'8961001000127',cat:'biscuit',sugar:22,sodium:300,al:['milk','gluten'],vegan:0,local:1},
+ {b:'Bisconni',n:'Cocomo',code:'8961001000134',cat:'biscuit',sugar:35,sodium:150,al:['milk','gluten','soy'],vegan:0,local:1},
+ {b:'Peek Freans',n:'Marie',code:'8961001000141',cat:'biscuit',sugar:19,sodium:330,al:['gluten'],vegan:1,local:1},
+ {b:'Nestlé',n:'Milkpak',code:'8961001000158',cat:'dairy',sugar:4.7,sodium:45,al:['milk'],vegan:0,boy:BOY+'Nestlé)'},
+ {b:'Olper\'s',n:'Full Cream Milk',code:'8961001000165',cat:'dairy',sugar:4.7,sodium:45,al:['milk'],vegan:0,local:1},
+ {b:'Maggi',n:'2-Minute Noodles',code:'8961001000172',cat:'noodles',sugar:3,sodium:1500,al:['gluten','soy'],vegan:1,boy:BOY+'Nestlé)'},
+ {b:'Kolson',n:'Instant Noodles',code:'8961001000189',cat:'noodles',sugar:3,sodium:1100,al:['gluten'],vegan:1,local:1},
+ {b:'National',n:'Whole Wheat Vermicelli',code:'8961001000196',cat:'noodles',sugar:2,sodium:20,al:['gluten'],vegan:1,local:1},
+];
+const LV = [{k:'BUY',c:'v0'},{k:'CAUTION',c:'v1'},{k:'AVOID',c:'v2'}];
+const COL = ['var(--buy)','var(--cau)','var(--avo)'];
+const $ = s => document.querySelector(s);
+let prof = {};
+try { prof = JSON.parse(localStorage.getItem('sb') || '{"boycott":true}'); } catch (e) { prof = {boycott:true}; }
+const save = () => { try { localStorage.setItem('sb', JSON.stringify(prof)); } catch (e) {} };
+
+function check(p) {
+  const r = [], add = (lv, t) => r.push({lv, t});
+  if (prof.diabetes) {
+    if (p.sugar >= 10) add(2, `High sugar (${p.sugar}g per 100g), not suitable for diabetes`);
+    else if (p.sugar >= 5) add(1, `Some sugar (${p.sugar}g per 100g), keep the portion small`);
+  }
+  if (prof.bp) {
+    if (p.sodium >= 600) add(2, `Very high salt (${p.sodium}mg per 100g), bad for blood pressure`);
+    else if (p.sodium >= 300) add(1, `Moderate salt (${p.sodium}mg per 100g), watch your intake`);
+  }
+  for (const a of ['nuts', 'milk', 'gluten', 'soy'])
+    if (prof[a] && p.al.includes(a)) add(2, `Contains ${a}, conflicts with your ${CONDS[a].toLowerCase()}`);
+  if (prof.vegan && !p.vegan) add(2, 'Contains animal-derived ingredients');
+  if (prof.boycott && p.boy) add(2, 'Brand is on your boycott filter');
+  return {r, lv: Math.max(0, ...r.map(x => x.lv))};
+}
+
+function show(html) { $('#app').innerHTML = html; window.scrollTo(0, 0); }
+function tab(t) { $('#t-profile').className = t == 'profile' ? 'on' : ''; $('#t-scan').className = t == 'scan' ? 'on' : ''; }
+
+function profileView() {
+  tab('profile');
+  show(`<h1>My Health Profile</h1><p class="sub">Select what applies to you. Saved on this device.</p>
+  <div class="card">${Object.entries(CONDS).map(([k, v]) =>
+    `<label class="chk"><input type="checkbox" data-k="${k}" ${prof[k] ? 'checked' : ''}> ${v}</label>`).join('')}</div>
+  <button class="btn" id="go">Save & start scanning →</button>
+  <p class="note">Prototype with sample data. Not medical advice.</p>`);
+  document.querySelectorAll('[data-k]').forEach(c => c.onchange = () => { prof[c.dataset.k] = c.checked; save(); });
+  $('#go').onclick = scanView;
+}
+
+function scanView() {
+  tab('scan');
+  show(`<h1>Check a product</h1><p class="sub">Scan a barcode or type a name.</p>
+  <input type="text" id="q" placeholder="e.g. Coca-Cola, Maggi, Peek Freans…" autocomplete="off">
+  <div id="sug"></div>
+  <button class="btn ghost" id="scan">📷 Scan barcode</button>
+  <div id="cam"></div>`);
+  const q = $('#q');
+  const list = () => {
+    const s = q.value.trim().toLowerCase();
+    const m = s ? P.filter(p => (p.b + ' ' + p.n).toLowerCase().includes(s) || p.code.includes(s)) : [];
+    $('#sug').innerHTML = !s ? '' : m.length
+      ? `<div class="card" style="margin-top:8px">${m.map(p => `<div class="sug" data-c="${p.code}"><span>${p.b} ${p.n}</span><small>${p.cat}</small></div>`).join('')}</div>`
+      : '<p class="sub" style="margin-top:10px">Not in the demo database. Try another name.</p>';
+    document.querySelectorAll('.sug').forEach(e => e.onclick = () => result(e.dataset.c));
+  };
+  q.oninput = list;
+  $('#scan').onclick = () => {
+    $('#cam').innerHTML = `<div class="scanner"><i></i>Scanning…</div>`;
+    setTimeout(() => {
+      // Demo: a real scanner would read the camera; here the person picks which barcode "was seen".
+      $('#cam').innerHTML = `<p class="sub" style="margin-top:12px">Barcode detected. Tap a demo item to simulate:</p>
+      <div class="chips">${P.map(p => `<button class="chip" data-c="${p.code}">${p.b} ${p.n}</button>`).join('')}</div>`;
+      document.querySelectorAll('.chip').forEach(e => e.onclick = () => result(e.dataset.c));
+    }, 1400);
+  };
+}
+
+function result(code) {
+  const p = P.find(x => x.code == code), {r, lv} = check(p);
+  const alts = (lv > 0 ? P.filter(a => a.cat == p.cat && a.local && a !== p) : [])
+    .map(a => ({a, ...check(a)})).filter(x => x.lv < lv || x.lv == 0).sort((x, y) => x.lv - y.lv).slice(0, 3);
+  show(`<button class="chip" id="back">← Back</button>
+  <h2 style="margin-top:12px">${p.b} ${p.n}</h2>
+  <div class="verdict ${LV[lv].c}"><b>${LV[lv].k}</b>${lv == 0 ? 'Looks fine for your profile' : lv == 1 ? 'Okay occasionally, with care' : 'Not recommended for you'}</div>
+  <div class="card">${r.length ? r.map(x => `<div class="reason"><span class="dot" style="background:${COL[x.lv]}"></span>${x.t}</div>`).join('')
+    : '<div class="reason"><span class="dot" style="background:var(--buy)"></span>No conflict with your health profile.</div>'}</div>
+  ${p.boy ? `<div class="boy"><b>⚠ Boycott alert</b><br>${p.boy}</div>` : '<div class="ok"><b>✓ Not on the boycott list</b>' + (p.local ? ' · Local brand 🇵🇰' : '') + '</div>'}
+  ${alts.length ? `<h2>Better local alternatives</h2>${alts.map(({a, lv}) => `<div class="card sug" data-c="${a.code}"><span><b>${a.b}</b> ${a.n}<br><small>Local brand 🇵🇰</small></span><span class="tag ${LV[lv].c}">${LV[lv].k}</span></div>`).join('')}`
+    : (lv > 0 || p.boy) ? '<p class="sub">No better local alternative in the demo data.</p>' : ''}
+  <p class="note">Prototype with sample data. Not medical advice.</p>`);
+  $('#back').onclick = scanView;
+  document.querySelectorAll('.sug').forEach(e => e.onclick = () => result(e.dataset.c));
+}
+
+$('#t-profile').onclick = profileView;
+$('#t-scan').onclick = scanView;
+profileView();
+</script>
+</body>
+</html>
