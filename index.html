@@ -2,79 +2,174 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>SafeBite</title>
 <style>
-:root{--bg:#f4f6f5;--card:#fff;--ink:#17211c;--mute:#5d6b64;--line:#dfe5e1;--brand:#1f7a4d;--buy:#1f7a4d;--cau:#b7791f;--avo:#c0392b}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,sans-serif}
-main{max-width:460px;margin:0 auto;padding:16px 16px 90px}
-h1{font-size:22px;margin:4px 0 2px}h2{font-size:17px;margin:18px 0 8px}
-.sub{color:var(--mute);margin:0 0 14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
-label.chk{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
-label.chk:last-child{border:0}
-input[type=checkbox]{width:20px;height:20px;accent-color:var(--brand)}
-input[type=text]{width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;font-size:16px}
-button{font:inherit;cursor:pointer}
-.btn{width:100%;padding:13px;border:0;border-radius:12px;background:var(--brand);color:#fff;font-weight:600;margin-top:8px}
-.btn.ghost{background:#fff;color:var(--brand);border:1.5px solid var(--brand)}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{padding:8px 12px;border:1px solid var(--line);background:#fff;border-radius:99px;font-size:14px}
-.sug{padding:11px 4px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;cursor:pointer}
-.sug small{color:var(--mute)}
-.scanner{height:150px;border-radius:12px;background:#10241a;position:relative;overflow:hidden;display:grid;place-items:center;color:#9fd8b8;margin-top:8px}
-.scanner i{position:absolute;left:0;right:0;height:3px;background:#3ddc84;box-shadow:0 0 12px #3ddc84;animation:sc 1.2s linear infinite alternate}
-@keyframes sc{from{top:8%}to{top:90%}}
-.verdict{text-align:center;color:#fff;border-radius:14px;padding:18px 12px;margin-bottom:12px}
-.verdict b{font-size:34px;display:block;letter-spacing:1px}
-.v0{background:var(--buy)}.v1{background:var(--cau)}.v2{background:var(--avo)}
-.reason{display:flex;gap:8px;padding:6px 0}
-.dot{flex:none;width:10px;height:10px;border-radius:50%;margin-top:7px}
-.boy{border:1.5px solid var(--avo);background:#fdecea;color:#7a1f16;border-radius:12px;padding:12px;margin-bottom:12px}
-.ok{border:1.5px solid var(--buy);background:#e9f6ee;color:#14532f;border-radius:12px;padding:12px;margin-bottom:12px}
-.tag{font-size:12px;font-weight:700;color:#fff;padding:2px 8px;border-radius:99px;white-space:nowrap}
-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:center}
-nav div{display:flex;width:100%;max-width:460px}
-nav button{flex:1;padding:14px 0;border:0;background:none;color:var(--mute);font-weight:600}
-nav button.on{color:var(--brand);box-shadow:inset 0 3px 0 var(--brand)}
-.note{font-size:12px;color:var(--mute);text-align:center;margin-top:18px}
+:root{--g1:#0b7a55;--g2:#2bc48a;--bg:#f2f6f4;--card:#fff;--ink:#14221c;--mute:#64736c;--line:#e3ebe7;--buy:#12a066;--cau:#f0a020;--avo:#e5484d;
+--sh:0 6px 20px rgba(20,60,40,.08)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;
+background:radial-gradient(circle at 20% 15%,#7ee0b5 0,transparent 40%),radial-gradient(circle at 85% 85%,#2a9d8f 0,transparent 45%),#0b3d2e}
+.phone{position:relative;width:390px;height:min(844px,calc(100vh - 28px));background:var(--bg);border-radius:42px;overflow:hidden;
+box-shadow:0 0 0 10px #101a16,0 40px 90px rgba(0,0,0,.5);display:flex;flex-direction:column}
+#app{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:110px;scrollbar-width:none}
+#app::-webkit-scrollbar{display:none}
+@media(max-width:480px){body{display:block}.phone{width:100%;height:100dvh;border-radius:0;box-shadow:none}}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+h1,h2,h3,p{margin:0}
+
+/* animations */
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes laser{from{top:6%}to{top:92%}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(43,196,138,.5)}100%{box-shadow:0 0 0 26px rgba(43,196,138,0)}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes float{50%{transform:translateY(-8px)}}
+@keyframes fly{to{transform:translate(var(--dx),var(--dy)) rotate(var(--r));opacity:0}}
+@keyframes load{from{width:0}to{width:100%}}
+.enter>*{animation:up .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*70ms)}
+
+/* splash */
+#splash{position:absolute;inset:0;z-index:20;background:linear-gradient(160deg,var(--g1),var(--g2));color:#fff;display:flex;flex-direction:column;
+align-items:center;justify-content:center;gap:10px;transition:opacity .5s,transform .5s}
+#splash.out{opacity:0;transform:scale(1.08);pointer-events:none}
+#splash .logo{width:110px;height:110px;border-radius:32px;background:#fff;display:grid;place-items:center;font-size:58px;animation:pop .7s both,pulse 1.6s .7s infinite}
+#splash h1{font-size:34px;letter-spacing:.5px;animation:up .6s .3s both}
+#splash p{opacity:.9;animation:up .6s .5s both}
+#splash .bar{width:140px;height:4px;border-radius:9px;background:rgba(255,255,255,.3);margin-top:26px;overflow:hidden}
+#splash .bar i{display:block;height:100%;background:#fff;animation:load 1.8s ease-out both}
+
+/* top banner */
+.top{background:linear-gradient(150deg,var(--g1),var(--g2));color:#fff;padding:30px 22px 30px;border-radius:0 0 32px 32px;position:relative;overflow:hidden}
+.top:after{content:"";position:absolute;right:-50px;top:-50px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.12)}
+.top h1{font-size:25px;line-height:1.2;position:relative}.top p{opacity:.9;margin-top:6px;position:relative}
+.pill{display:inline-block;margin-top:12px;background:rgba(255,255,255,.22);padding:5px 12px;border-radius:99px;font-size:13px;font-weight:600;position:relative}
+.sec{margin:0 16px 14px}
+.lbl{font-size:12px;font-weight:700;letter-spacing:1px;color:var(--mute);text-transform:uppercase;margin:20px 20px 10px}
+
+/* profile tiles */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px}
+.tile{position:relative;background:var(--card);border:2px solid transparent;border-radius:18px;padding:14px 12px;text-align:left;box-shadow:var(--sh);
+transition:transform .15s,border-color .2s,background .2s}
+.tile:active{transform:scale(.95)}
+.tile .ic{font-size:28px;display:block;margin-bottom:6px;transition:transform .3s;transform-origin:left center}
+.tile b{font-size:14px;line-height:1.25;display:block}
+.tile .ck{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:var(--g1);color:#fff;font-size:13px;display:none;place-items:center}
+.tile.on{border-color:var(--g2);background:#e9f9f1}
+.tile.on .ic{transform:scale(1.2) rotate(-8deg)}
+.tile.on .ck{display:grid;animation:pop .35s both}
+.cta{position:sticky;bottom:0;margin:20px 16px 0;display:block;width:calc(100% - 32px);padding:16px;border-radius:16px;color:#fff;font-weight:700;font-size:17px;
+background:linear-gradient(135deg,var(--g1),var(--g2));box-shadow:0 10px 24px rgba(11,122,85,.4);transition:transform .15s}
+.cta:active{transform:scale(.97)}
+
+/* scan */
+.vf{position:relative;height:210px;border-radius:24px;background:linear-gradient(160deg,#0d2a20,#143d2e);overflow:hidden;display:grid;place-items:center;box-shadow:var(--sh);transition:box-shadow .3s}
+.vf .bars{width:62%;height:84px;opacity:.55;background:repeating-linear-gradient(90deg,#d8fff0 0 3px,transparent 3px 7px,#d8fff0 7px 8px,transparent 8px 12px,#d8fff0 12px 16px,transparent 16px 19px);border-radius:4px;transition:.3s}
+.vf .cn{position:absolute;width:34px;height:34px;border:4px solid #3ddc97;transition:.3s}
+.cn.a{top:16px;left:16px;border-right:0;border-bottom:0;border-radius:12px 0 0 0}.cn.b{top:16px;right:16px;border-left:0;border-bottom:0;border-radius:0 12px 0 0}
+.cn.c{bottom:16px;left:16px;border-right:0;border-top:0;border-radius:0 0 0 12px}.cn.d{bottom:16px;right:16px;border-left:0;border-top:0;border-radius:0 0 12px 0}
+.vf .ls{position:absolute;left:8%;right:8%;height:3px;border-radius:3px;background:#3ddc97;box-shadow:0 0 16px 3px #3ddc97;animation:laser 1.6s ease-in-out infinite alternate}
+.vf .st{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:#b9ecd6;font-size:13px;font-weight:600}
+.vf.go .ls{animation-duration:.45s}.vf.go .bars{opacity:1}
+.vf.ok{box-shadow:0 0 0 4px #3ddc97,0 0 40px rgba(61,220,151,.6)}.vf.ok .ls{display:none}.vf.ok .bars{opacity:1}
+.vf.ok .st{color:#fff}
+.scanbtn{display:block;width:100%;margin-top:14px;padding:16px;border-radius:16px;color:#fff;font-weight:700;font-size:17px;background:linear-gradient(135deg,var(--g1),var(--g2));
+box-shadow:0 10px 24px rgba(11,122,85,.35);transition:transform .15s}
+.scanbtn:active{transform:scale(.97)}.scanbtn:disabled{opacity:.6}
+.search{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:16px;padding:0 14px;box-shadow:var(--sh);border:2px solid transparent;transition:border-color .2s}
+.search:focus-within{border-color:var(--g2)}
+.search input{flex:1;border:0;outline:0;padding:15px 0;font-size:16px;background:none;color:var(--ink);min-width:0}
+.list{background:var(--card);border-radius:16px;box-shadow:var(--sh);margin-top:8px;overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);width:100%;text-align:left;transition:background .15s}
+.row:last-child{border:0}.row:active{background:#eef7f2}.row em{font-style:normal;font-size:24px}.row small{color:var(--mute);display:block}
+.scroll{display:flex;gap:10px;overflow-x:auto;padding:2px 16px 8px;scrollbar-width:none}.scroll::-webkit-scrollbar{display:none}
+.mini{flex:none;width:112px;background:var(--card);border-radius:18px;padding:12px 10px;text-align:center;box-shadow:var(--sh);transition:transform .15s}
+.mini:active{transform:scale(.94)}.mini em{font-style:normal;font-size:30px;display:block}.mini b{font-size:13px;display:block;line-height:1.25;margin-top:4px}.mini small{color:var(--mute);font-size:12px}
+
+/* analyze */
+.an{display:flex;flex-direction:column;align-items:center;padding:80px 28px 0;text-align:center}
+.an .em{width:110px;height:110px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:56px;box-shadow:var(--sh);animation:pulse 1.2s infinite,float 2s ease-in-out infinite}
+.an h2{margin-top:26px;font-size:22px}.an p{color:var(--mute);margin-top:4px}
+.steps{list-style:none;padding:0;margin:26px 0 0;text-align:left}
+.steps li{padding:9px 0;opacity:0;animation:up .4s both;font-weight:600}
+.steps li:before{content:"✓";display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--g2);color:#fff;font-size:13px;margin-right:10px}
+
+/* result */
+.hero{position:relative;color:#fff;text-align:center;padding:22px 20px 34px;border-radius:0 0 36px 36px;overflow:hidden}
+.hero.v0{background:linear-gradient(160deg,#0b8a5b,#2bc48a)}.hero.v1{background:linear-gradient(160deg,#e08a00,#f7bf4a)}.hero.v2{background:linear-gradient(160deg,#b4232a,#f0646a)}
+.hero.v2.shake{animation:shake .5s .6s}
+.back{position:absolute;left:14px;top:14px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.25);font-size:24px;line-height:1;z-index:2}
+.hero .pe{font-size:44px;margin-top:6px}.hero .pn{font-weight:700;font-size:18px;margin-top:2px}.hero .pc{opacity:.9;font-size:13px}
+.ring{position:relative;width:150px;height:150px;margin:14px auto 6px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:9;stroke-linecap:round}.ring .bg{stroke:rgba(255,255,255,.28)}
+.ring .fg{stroke:#fff;stroke-dasharray:327;stroke-dashoffset:327;transition:stroke-dashoffset 1.3s cubic-bezier(.2,.8,.2,1) .2s}
+.ring .num{position:absolute;inset:0;display:grid;place-content:center}.ring b{font-size:44px;line-height:1}.ring small{opacity:.85;font-size:12px}
+.vd{font-size:34px;font-weight:800;letter-spacing:2px;animation:pop .5s .5s both}.hero p.tg{opacity:.95;margin-top:2px}
+.conf{position:absolute;left:50%;top:150px;width:9px;height:14px;border-radius:2px;animation:fly 1.4s cubic-bezier(.2,.7,.3,1) forwards}
+.card{background:var(--card);border-radius:20px;padding:14px;box-shadow:var(--sh)}
+.card h3{font-size:15px;margin-bottom:8px}
+.why{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.why:last-child{border:0}.why i{font-style:normal;font-size:20px}
+.meter{margin:10px 0}.meter div.t{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px}
+.meter .tr{height:10px;background:#e9efec;border-radius:9px;overflow:hidden}.meter .fl{height:100%;width:0;border-radius:9px;transition:width 1.1s cubic-bezier(.2,.8,.2,1) .4s}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chip{padding:5px 11px;border-radius:99px;font-size:13px;font-weight:600;background:#eef2f0;color:var(--mute)}
+.chip.bad{background:#fde8e9;color:#a6252b}.chip.good{background:#e1f6ec;color:#0c7a50}
+.boy{display:flex;gap:12px;align-items:center;border-radius:20px;padding:14px}
+.boy .bi{font-size:30px;flex:none}.boy.bad{background:#fde8e9;color:#7a1a1f;border:2px solid #f2a9ac}.boy.bad .bi{animation:pulse 1.4s infinite;border-radius:50%}
+.boy.ok{background:#e1f6ec;color:#0a5a3a;border:2px solid #9bdfc0}.boy small{display:block;opacity:.85}
+.alt{flex:none;width:158px;background:var(--card);border-radius:20px;padding:14px 12px;box-shadow:var(--sh);text-align:left;transition:transform .15s}
+.alt:active{transform:scale(.95)}.alt em{font-style:normal;font-size:30px}.alt b{display:block;font-size:14px;line-height:1.25;margin:4px 0}.alt small{color:var(--mute);display:block}
+.sc{display:inline-block;margin-top:8px;color:#fff;font-weight:800;font-size:13px;padding:3px 10px;border-radius:99px}
+.note{font-size:12px;color:var(--mute);text-align:center;margin:18px 20px}
+
+/* nav */
+nav{position:absolute;left:18px;right:18px;bottom:18px;z-index:5;display:flex;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-radius:24px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+nav button{flex:1;padding:11px 0;border-radius:18px;font-weight:700;font-size:14px;color:var(--mute);transition:background .25s,color .25s}
+nav button span{display:block;font-size:20px;transition:transform .3s}
+nav button.on{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff}nav button.on span{transform:translateY(-2px) scale(1.15)}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
-<main id="app"></main>
-<nav><div><button id="t-profile">👤 My Profile</button><button id="t-scan">🔍 Scan</button></div></nav>
+<div class="phone">
+  <div id="splash"><div class="logo">🥗</div><h1>SafeBite</h1><p>Scan smart. Eat right. Buy ethical.</p><div class="bar"><i></i></div></div>
+  <div id="app"></div>
+  <nav><button id="t-profile"><span>👤</span>Profile</button><button id="t-scan"><span>📷</span>Scan</button></nav>
+</div>
 <script>
-const CONDS = {diabetes:'Diabetes', bp:'High blood pressure', nuts:'Nut allergy', milk:'Milk / lactose allergy', gluten:'Gluten / celiac', soy:'Soy allergy', vegan:'Vegan diet', boycott:'Flag boycotted brands'};
+const CONDS = {diabetes:['🩸','Diabetes'], bp:['🫀','High blood pressure'], nuts:['🥜','Nut allergy'], milk:['🥛','Milk / lactose'], gluten:['🌾','Gluten / celiac'], soy:['🫘','Soy allergy'], vegan:['🌱','Vegan diet'], boycott:['🚫','Avoid boycotted brands']};
+const GROUPS = [['Health', ['diabetes','bp']], ['Allergies', ['nuts','milk','gluten','soy']], ['Diet & ethics', ['vegan','boycott']]];
 // Sample data for the demo only (per 100g). Not verified nutrition or boycott facts.
-const BOY = 'On the common boycott lists (parent company: ';
+const BOY = 'On common boycott lists. Parent company: ';
 const P = [
- {b:'Coca-Cola',n:'Classic',code:'8961001000011',cat:'drink',sugar:10.6,sodium:10,al:[],vegan:1,boy:BOY+'The Coca-Cola Co.)'},
- {b:'Pepsi',n:'Regular',code:'8961001000028',cat:'drink',sugar:11,sodium:10,al:[],vegan:1,boy:BOY+'PepsiCo)'},
+ {b:'Coca-Cola',n:'Classic',code:'8961001000011',cat:'drink',sugar:10.6,sodium:10,al:[],vegan:1,boy:BOY+'The Coca-Cola Co.'},
+ {b:'Pepsi',n:'Regular',code:'8961001000028',cat:'drink',sugar:11,sodium:10,al:[],vegan:1,boy:BOY+'PepsiCo'},
  {b:'Pakola',n:'Ice Cream Soda',code:'8961001000035',cat:'drink',sugar:11,sodium:15,al:[],vegan:1,local:1},
  {b:'Shezan',n:'Mango Juice',code:'8961001000042',cat:'drink',sugar:12,sodium:10,al:[],vegan:1,local:1},
- {b:'Tapal',n:'Green Tea (unsweetened)',code:'8961001000059',cat:'drink',sugar:0,sodium:0,al:[],vegan:1,local:1},
- {b:'Lay\'s',n:'Classic Salted',code:'8961001000066',cat:'snack',sugar:1,sodium:560,al:[],vegan:1,boy:BOY+'PepsiCo)'},
- {b:'Kurkure',n:'Masala Munch',code:'8961001000073',cat:'snack',sugar:3,sodium:780,al:['gluten'],vegan:1,boy:BOY+'PepsiCo)'},
+ {b:'Tapal',n:'Green Tea (unsweetened)',code:'8961001000059',cat:'drink',sugar:0,sodium:0,al:[],vegan:1,local:1,e:'🍵'},
+ {b:"Lay's",n:'Classic Salted',code:'8961001000066',cat:'snack',sugar:1,sodium:560,al:[],vegan:1,boy:BOY+'PepsiCo'},
+ {b:'Kurkure',n:'Masala Munch',code:'8961001000073',cat:'snack',sugar:3,sodium:780,al:['gluten'],vegan:1,boy:BOY+'PepsiCo'},
  {b:'Slanty',n:'Masala',code:'8961001000080',cat:'snack',sugar:3,sodium:720,al:['gluten'],vegan:1,local:1},
- {b:'Lahori',n:'Roasted Chana',code:'8961001000097',cat:'snack',sugar:2,sodium:120,al:[],vegan:1,local:1},
- {b:'Local Mix',n:'Salted Peanuts',code:'8961001000103',cat:'snack',sugar:3,sodium:250,al:['nuts'],vegan:1,local:1},
- {b:'Nestlé',n:'KitKat 4-finger',code:'8961001000110',cat:'biscuit',sugar:47,sodium:80,al:['milk','gluten','soy'],vegan:0,boy:BOY+'Nestlé)'},
+ {b:'Lahori',n:'Roasted Chana',code:'8961001000097',cat:'snack',sugar:2,sodium:120,al:[],vegan:1,local:1,e:'🫘'},
+ {b:'Local Mix',n:'Salted Peanuts',code:'8961001000103',cat:'snack',sugar:3,sodium:250,al:['nuts'],vegan:1,local:1,e:'🥜'},
+ {b:'Nestlé',n:'KitKat 4-finger',code:'8961001000110',cat:'biscuit',sugar:47,sodium:80,al:['milk','gluten','soy'],vegan:0,boy:BOY+'Nestlé'},
  {b:'Peek Freans',n:'Sooper',code:'8961001000127',cat:'biscuit',sugar:22,sodium:300,al:['milk','gluten'],vegan:0,local:1},
  {b:'Bisconni',n:'Cocomo',code:'8961001000134',cat:'biscuit',sugar:35,sodium:150,al:['milk','gluten','soy'],vegan:0,local:1},
  {b:'Peek Freans',n:'Marie',code:'8961001000141',cat:'biscuit',sugar:19,sodium:330,al:['gluten'],vegan:1,local:1},
- {b:'Nestlé',n:'Milkpak',code:'8961001000158',cat:'dairy',sugar:4.7,sodium:45,al:['milk'],vegan:0,boy:BOY+'Nestlé)'},
- {b:'Olper\'s',n:'Full Cream Milk',code:'8961001000165',cat:'dairy',sugar:4.7,sodium:45,al:['milk'],vegan:0,local:1},
- {b:'Maggi',n:'2-Minute Noodles',code:'8961001000172',cat:'noodles',sugar:3,sodium:1500,al:['gluten','soy'],vegan:1,boy:BOY+'Nestlé)'},
+ {b:'Nestlé',n:'Milkpak',code:'8961001000158',cat:'dairy',sugar:4.7,sodium:45,al:['milk'],vegan:0,boy:BOY+'Nestlé'},
+ {b:"Olper's",n:'Full Cream Milk',code:'8961001000165',cat:'dairy',sugar:4.7,sodium:45,al:['milk'],vegan:0,local:1},
+ {b:'Maggi',n:'2-Minute Noodles',code:'8961001000172',cat:'noodles',sugar:3,sodium:1500,al:['gluten','soy'],vegan:1,boy:BOY+'Nestlé'},
  {b:'Kolson',n:'Instant Noodles',code:'8961001000189',cat:'noodles',sugar:3,sodium:1100,al:['gluten'],vegan:1,local:1},
  {b:'National',n:'Whole Wheat Vermicelli',code:'8961001000196',cat:'noodles',sugar:2,sodium:20,al:['gluten'],vegan:1,local:1},
 ];
-const LV = [{k:'BUY',c:'v0'},{k:'CAUTION',c:'v1'},{k:'AVOID',c:'v2'}];
-const COL = ['var(--buy)','var(--cau)','var(--avo)'];
+const EM = {drink:'🥤',snack:'🍟',biscuit:'🍪',dairy:'🥛',noodles:'🍜'};
+const em = p => p.e || EM[p.cat];
+const LV = [{k:'BUY',i:'✅',t:'Safe for your profile',c:'var(--buy)'},{k:'CAUTION',i:'⚠️',t:'Okay occasionally, with care',c:'var(--cau)'},{k:'AVOID',i:'⛔',t:'Not recommended for you',c:'var(--avo)'}];
 const $ = s => document.querySelector(s);
-let prof = {};
+let prof = {}, timers = [], nx = 0;
 try { prof = JSON.parse(localStorage.getItem('sb') || '{"boycott":true}'); } catch (e) { prof = {boycott:true}; }
 const save = () => { try { localStorage.setItem('sb', JSON.stringify(prof)); } catch (e) {} };
+const later = (f, ms) => timers.push(setTimeout(f, ms));
 
 function check(p) {
   const r = [], add = (lv, t) => r.push({lv, t});
@@ -87,73 +182,117 @@ function check(p) {
     else if (p.sodium >= 300) add(1, `Moderate salt (${p.sodium}mg per 100g), watch your intake`);
   }
   for (const a of ['nuts', 'milk', 'gluten', 'soy'])
-    if (prof[a] && p.al.includes(a)) add(2, `Contains ${a}, conflicts with your ${CONDS[a].toLowerCase()}`);
-  if (prof.vegan && !p.vegan) add(2, 'Contains animal-derived ingredients');
+    if (prof[a] && p.al.includes(a)) add(2, `Contains ${a}, conflicts with your ${CONDS[a][1].toLowerCase()}`);
+  if (prof.vegan && !p.vegan) add(2, 'Contains animal-derived ingredients, not vegan');
   if (prof.boycott && p.boy) add(2, 'Brand is on your boycott filter');
-  return {r, lv: Math.max(0, ...r.map(x => x.lv))};
+  const lv = Math.max(0, ...r.map(x => x.lv));
+  return {r, lv, score: Math.max(5, 100 - r.reduce((s, x) => s + (x.lv == 2 ? 40 : 20), 0))};
 }
 
-function show(html) { $('#app').innerHTML = html; window.scrollTo(0, 0); }
-function tab(t) { $('#t-profile').className = t == 'profile' ? 'on' : ''; $('#t-scan').className = t == 'scan' ? 'on' : ''; }
+function show(html, cls) {
+  timers.forEach(clearTimeout); timers = [];
+  const a = $('#app'); a.className = 'enter'; a.innerHTML = html;
+  [...a.children].forEach((c, i) => c.style.setProperty('--i', i));
+  a.scrollTop = 0;
+}
+const tab = t => { $('#t-profile').className = t == 'profile' ? 'on' : ''; $('#t-scan').className = t == 'scan' ? 'on' : ''; };
 
 function profileView() {
   tab('profile');
-  show(`<h1>My Health Profile</h1><p class="sub">Select what applies to you. Saved on this device.</p>
-  <div class="card">${Object.entries(CONDS).map(([k, v]) =>
-    `<label class="chk"><input type="checkbox" data-k="${k}" ${prof[k] ? 'checked' : ''}> ${v}</label>`).join('')}</div>
-  <button class="btn" id="go">Save & start scanning →</button>
+  const n = () => Object.values(prof).filter(Boolean).length;
+  show(`<div class="top"><h1>Hi 👋<br>Let's build your health profile</h1><p>We'll check every product against it.</p><span class="pill" id="cnt"></span></div>
+  ${GROUPS.map(([g, ks]) => `<div class="lbl">${g}</div><div class="grid">${ks.map(k => `<button class="tile ${prof[k] ? 'on' : ''}" data-k="${k}"><span class="ck">✓</span><span class="ic">${CONDS[k][0]}</span><b>${CONDS[k][1]}</b></button>`).join('')}</div>`).join('')}
+  <button class="cta" id="go">Start scanning →</button>
   <p class="note">Prototype with sample data. Not medical advice.</p>`);
-  document.querySelectorAll('[data-k]').forEach(c => c.onchange = () => { prof[c.dataset.k] = c.checked; save(); });
+  const cnt = () => $('#cnt').textContent = n() ? `${n()} selected` : 'Nothing selected yet';
+  cnt();
+  document.querySelectorAll('.tile').forEach(t => t.onclick = () => { prof[t.dataset.k] = !prof[t.dataset.k]; t.classList.toggle('on'); save(); cnt(); });
   $('#go').onclick = scanView;
 }
 
 function scanView() {
   tab('scan');
-  show(`<h1>Check a product</h1><p class="sub">Scan a barcode or type a name.</p>
-  <input type="text" id="q" placeholder="e.g. Coca-Cola, Maggi, Peek Freans…" autocomplete="off">
-  <div id="sug"></div>
-  <button class="btn ghost" id="scan">📷 Scan barcode</button>
-  <div id="cam"></div>`);
+  show(`<div class="top"><h1>Scan a product</h1><p>Point at the barcode or search by name.</p></div>
+  <div class="sec" style="margin-top:-22px;position:relative;z-index:1">
+    <div class="vf" id="vf"><i class="cn a"></i><i class="cn b"></i><i class="cn c"></i><i class="cn d"></i><div class="bars"></div><i class="ls"></i><div class="st" id="st">Ready to scan</div></div>
+    <button class="scanbtn" id="scan">📷 Scan barcode</button>
+  </div>
+  <div class="sec"><div class="search">🔍<input id="q" placeholder="Search e.g. Coca-Cola, Maggi…" autocomplete="off"></div><div id="sug"></div></div>
+  <div class="lbl" style="margin-top:6px">Try a demo product</div>
+  <div class="scroll">${P.map(p => `<button class="mini" data-c="${p.code}"><em>${em(p)}</em><b>${p.b} ${p.n}</b></button>`).join('')}</div>`);
   const q = $('#q');
-  const list = () => {
+  q.oninput = () => {
     const s = q.value.trim().toLowerCase();
     const m = s ? P.filter(p => (p.b + ' ' + p.n).toLowerCase().includes(s) || p.code.includes(s)) : [];
     $('#sug').innerHTML = !s ? '' : m.length
-      ? `<div class="card" style="margin-top:8px">${m.map(p => `<div class="sug" data-c="${p.code}"><span>${p.b} ${p.n}</span><small>${p.cat}</small></div>`).join('')}</div>`
-      : '<p class="sub" style="margin-top:10px">Not in the demo database. Try another name.</p>';
-    document.querySelectorAll('.sug').forEach(e => e.onclick = () => result(e.dataset.c));
+      ? `<div class="list">${m.map(p => `<button class="row" data-c="${p.code}"><em>${em(p)}</em><span><b>${p.b} ${p.n}</b><small>${p.cat}</small></span></button>`).join('')}</div>`
+      : '<p class="note" style="margin:12px 0 0">Not in the demo database. Try another name.</p>';
+    document.querySelectorAll('.row').forEach(e => e.onclick = () => analyze(e.dataset.c));
   };
-  q.oninput = list;
-  $('#scan').onclick = () => {
-    $('#cam').innerHTML = `<div class="scanner"><i></i>Scanning…</div>`;
-    setTimeout(() => {
-      // Demo: a real scanner would read the camera; here the person picks which barcode "was seen".
-      $('#cam').innerHTML = `<p class="sub" style="margin-top:12px">Barcode detected. Tap a demo item to simulate:</p>
-      <div class="chips">${P.map(p => `<button class="chip" data-c="${p.code}">${p.b} ${p.n}</button>`).join('')}</div>`;
-      document.querySelectorAll('.chip').forEach(e => e.onclick = () => result(e.dataset.c));
-    }, 1400);
-  };
+  document.querySelectorAll('.mini').forEach(e => e.onclick = () => doScan(e.dataset.c));
+  $('#scan').onclick = () => { nx = (nx + 7) % P.length; doScan(P[nx].code); }; // 19 is prime, so +7 cycles through every product
+}
+
+function doScan(code) {
+  const vf = $('#vf'); $('#scan').disabled = true;
+  $('#app').scrollTop = 0; vf.className = 'vf go'; $('#st').textContent = 'Scanning…';
+  later(() => { vf.className = 'vf ok'; $('#st').textContent = '✓ Barcode ' + code; }, 1200);
+  later(() => analyze(code), 1900);
+}
+
+function analyze(code) {
+  const p = P.find(x => x.code == code);
+  show(`<div class="an"><div class="em">${em(p)}</div><h2>${p.b} ${p.n}</h2><p>Analyzing for your profile…</p>
+  <ul class="steps"><li style="animation-delay:.2s">Reading ingredients</li><li style="animation-delay:.7s">Matching your health profile</li><li style="animation-delay:1.2s">Checking brand ethics</li></ul></div>`);
+  later(() => result(code), 1900);
+}
+
+function confetti(el) {
+  const cols = ['#fff', '#ffd54a', '#7fffd0', '#ff8fa3', '#8ecbff'];
+  for (let i = 0; i < 36; i++) {
+    const s = document.createElement('i'), a = Math.random() * 6.28, d = 90 + Math.random() * 150;
+    s.className = 'conf'; s.style.cssText = `background:${cols[i % 5]};--dx:${Math.cos(a) * d}px;--dy:${Math.sin(a) * d - 40}px;--r:${Math.random() * 720}deg`;
+    el.appendChild(s);
+  }
 }
 
 function result(code) {
-  const p = P.find(x => x.code == code), {r, lv} = check(p);
-  const alts = (lv > 0 ? P.filter(a => a.cat == p.cat && a.local && a !== p) : [])
-    .map(a => ({a, ...check(a)})).filter(x => x.lv < lv || x.lv == 0).sort((x, y) => x.lv - y.lv).slice(0, 3);
-  show(`<button class="chip" id="back">← Back</button>
-  <h2 style="margin-top:12px">${p.b} ${p.n}</h2>
-  <div class="verdict ${LV[lv].c}"><b>${LV[lv].k}</b>${lv == 0 ? 'Looks fine for your profile' : lv == 1 ? 'Okay occasionally, with care' : 'Not recommended for you'}</div>
-  <div class="card">${r.length ? r.map(x => `<div class="reason"><span class="dot" style="background:${COL[x.lv]}"></span>${x.t}</div>`).join('')
-    : '<div class="reason"><span class="dot" style="background:var(--buy)"></span>No conflict with your health profile.</div>'}</div>
-  ${p.boy ? `<div class="boy"><b>⚠ Boycott alert</b><br>${p.boy}</div>` : '<div class="ok"><b>✓ Not on the boycott list</b>' + (p.local ? ' · Local brand 🇵🇰' : '') + '</div>'}
-  ${alts.length ? `<h2>Better local alternatives</h2>${alts.map(({a, lv}) => `<div class="card sug" data-c="${a.code}"><span><b>${a.b}</b> ${a.n}<br><small>Local brand 🇵🇰</small></span><span class="tag ${LV[lv].c}">${LV[lv].k}</span></div>`).join('')}`
-    : (lv > 0 || p.boy) ? '<p class="sub">No better local alternative in the demo data.</p>' : ''}
+  const p = P.find(x => x.code == code), {r, lv, score} = check(p), L = LV[lv];
+  const alts = (lv > 0 || p.boy ? P.filter(a => a.cat == p.cat && a.local && a !== p) : [])
+    .map(a => ({a, ...check(a)})).filter(x => x.lv < lv || x.lv == 0).sort((x, y) => y.score - x.score).slice(0, 4);
+  const bar = (name, val, max, lo, hi, unit) => `<div class="meter"><div class="t"><span>${name}</span><span>${val}${unit}</span></div><div class="tr"><div class="fl" data-w="${Math.min(100, val / max * 100)}" style="background:${val >= hi ? 'var(--avo)' : val >= lo ? 'var(--cau)' : 'var(--buy)'}"></div></div></div>`;
+  show(`<div class="hero v${lv}" id="hero"><button class="back" id="back">‹</button>
+    <div class="pe">${em(p)}</div><div class="pn">${p.b} ${p.n}</div><div class="pc">${p.cat}${p.local ? ' · Local brand 🇵🇰' : ''}</div>
+    <div class="ring"><svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg" id="fg" cx="60" cy="60" r="52"/></svg><div class="num"><b id="num">0</b><small>health score</small></div></div>
+    <div class="vd">${L.i} ${L.k}</div><p class="tg">${L.t}</p></div>
+  <div class="lbl">Why?</div>
+  <div class="sec card">${r.length ? r.map(x => `<div class="why"><i>${x.lv == 2 ? '⛔' : '⚠️'}</i><span>${x.t}</span></div>`).join('') : '<div class="why"><i>✅</i><span>No conflict with your health profile.</span></div>'}</div>
+  <div class="lbl">Ethics</div>
+  <div class="sec">${p.boy ? `<div class="boy bad"><span class="bi">🚫</span><span><b>Boycott alert</b><small>${p.boy}</small></span></div>`
+    : `<div class="boy ok"><span class="bi">🤝</span><span><b>Not on the boycott list</b><small>${p.local ? 'Local brand, supports the local economy' : 'No boycott flag in our data'}</small></span></div>`}</div>
+  <div class="lbl">Label facts</div>
+  <div class="sec card">${bar('Sugar', p.sugar, 25, 5, 10, 'g')}${bar('Salt', p.sodium, 1500, 300, 600, 'mg')}
+    <div class="chips">${p.al.map(a => `<span class="chip ${prof[a] ? 'bad' : ''}">${prof[a] ? '⚠ ' : ''}${a}</span>`).join('') || '<span class="chip good">No major allergens</span>'}<span class="chip ${p.vegan ? 'good' : prof.vegan ? 'bad' : ''}">${p.vegan ? '🌱 Vegan' : '🥛 Animal-derived'}</span></div></div>
+  ${alts.length ? `<div class="lbl">Better local alternatives</div><div class="scroll">${alts.map(({a, score, lv}) => `<button class="alt" data-c="${a.code}"><em>${em(a)}</em><b>${a.b} ${a.n}</b><small>Local 🇵🇰</small><span class="sc" style="background:${LV[lv].c}">${score} · ${LV[lv].k}</span></button>`).join('')}</div>`
+    : (lv > 0 || p.boy) ? '<p class="note">No better local alternative in the demo data.</p>' : ''}
   <p class="note">Prototype with sample data. Not medical advice.</p>`);
   $('#back').onclick = scanView;
-  document.querySelectorAll('.sug').forEach(e => e.onclick = () => result(e.dataset.c));
+  document.querySelectorAll('.alt').forEach(e => e.onclick = () => analyze(e.dataset.c));
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    $('#fg').style.strokeDashoffset = 327 * (1 - score / 100);
+    document.querySelectorAll('.fl').forEach(f => f.style.width = f.dataset.w + '%');
+    const t0 = performance.now(), num = $('#num');
+    const tick = t => { const k = Math.min(1, (t - t0) / 1300); num.textContent = Math.round(score * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+    if (lv == 0) later(() => confetti($('#hero')), 700);
+    if (lv == 2) $('#hero').classList.add('shake');
+  }));
 }
 
 $('#t-profile').onclick = profileView;
 $('#t-scan').onclick = scanView;
+const sp = $('#splash'), endSplash = () => { sp.classList.add('out'); setTimeout(() => sp.remove(), 600); };
+sp.onclick = endSplash; setTimeout(endSplash, 2100);
 profileView();
 </script>
 </body>
